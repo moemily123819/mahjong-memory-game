@@ -1,0 +1,200 @@
+ <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <title>Mermory Game</title>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.js"></script>
+  
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/style.css">
+  
+  </head>
+  <body>
+    <main class="outer-container container-border"  content="width=device-width, initial-scale=1.0">
+	<section class="top">
+		<br>
+		<div class="row" style="text-align:center;"><h2><b>Memory Game</b>          
+		<input type="submit" id='start' value="Shuffle and Start" class="btn btn-sm" >
+		</h2>
+		<div class="row" id="not" style="text-align:center; visibility:hidden;"><h5><b>Not a match</b></h5>          
+			<div class="row" id="win" style="text-align:center; visibility:hidden;"><h3><b>well Done ! </b></h3>          
+			</div>
+		
+		<br>
+	
+	</section>
+	<section class="game">
+		
+	</section>
+	
+
+</main>
+
+<script type="text/javascript">
+	var image_array = ["bamboo1", "bamboo2", "bamboo3", "bamboo4", "bamboo5", "bamboo6", "bamboo7", "bamboo8", "bamboo9", 
+	"bamboo1", "bamboo2", "bamboo3", "bamboo4", "bamboo5", "bamboo6", "bamboo7", "bamboo8", "bamboo9", 
+	"character1", "character2", "character3", "character4", "character5", "character6", "character7", "character8", "character9", 
+	"character1", "character2", "character3", "character4", "character5", "character6", "character7", "character8", "character9", ]
+
+	var match_cls_array = [];
+	var match_id_array = [];
+	var game_start = false;
+	var count = 0;
+	var matched_array = [];
+
+initDisplayTiles(image_array);
+
+function initDisplayTiles(arr) {
+
+    $(".game").empty();
+	var i = 0;
+	var j = 0;
+	for (i = 0; i <4; i++) {
+		var row_class ='row'+i.toString();	
+		var new_row = '<div class="row ' + row_class +'">'
+		$( 'section.game' ).append( new_row );
+		for (j = 0; j <9; j++) {
+			var x = i*9 + j;
+			var card_id = 'card' + i.toString() + j.toString();
+			var image_id = 'tile' + i.toString() + j.toString();			
+			var column_class = "column"+i.toString() + j.toString();
+			var column_row = '<div class="column '+column_class+'">';
+			var card_class = '<div class="card" id="' + card_id + '">';
+			var image_class = '<input type="image" class= "bttn" id="' + image_id + '" src = "static\\images\\' +arr[x]+'.PNG"></div></div>';
+			console.log(column_row, card_class, image_class);
+			var div_row_class = "div."+row_class;
+			$(div_row_class).append( column_row + card_class + image_class);
+    
+		}
+		$(div_row_class).append( '</div>');
+	}
+}
+
+function displayTiles(arr) {
+
+var i = 0;
+var j = 0;
+for (i = 0; i <4; i++) {
+	for (j = 0; j <9; j++) {
+		var x = i*9 + j;
+		var image_id = '#tile' + i.toString() + j.toString();			
+		console.log(image_id, arr[x]);
+		$(image_id).attr("src","static\\images\\blank.PNG");
+		$(image_id).attr("class", arr[x]);
+
+	}
+}
+}
+
+
+
+function randomChoice(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }	
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+
+
+$(".card").click(function(){
+	console.log('input clicked', game_start);
+	if (game_start == true) {
+
+		var id_0  = this.id;
+		var num_id_0 = id_0.substring(4,6);
+		var image_id_2 = 'tile'+num_id_0.toString();
+		var clicked_id = matched_array.indexOf(image_id_2);
+		console.log('id_0 :', id_0, clicked_id)
+		if (clicked_id == -1) {
+
+			var image_id = '#tile' + num_id_0.toString();			
+			cls = $(image_id).attr('class');  
+			var image_0 = 'static\\images\\' +cls+'.PNG?';
+			console.log(' clicked<>1', image_id, image_id_2, image_0);
+			$(image_id).attr("src", image_0);
+//		document.getElementById(image_id_2).src=image_0+'random='+new Date().getTime();
+			console.log(' new image : ', document.getElementById(image_id_2).src);
+			match_cls_array.push(cls);
+			match_id_array.push(image_id_2);
+			var z = match_id_array.length;
+			console.log('z', z, match_id_array);
+//		  $('#photo_profile').prop('src', fullPath + '?' + Math.random())
+//        $('img').attr('src', $('img').attr('src') + '?' + Math.random());
+
+			if (z == 2 ) {
+				id_0=match_id_array[0];
+				var id_1=match_id_array[1];
+				image_id = '#'+id_0;
+				var	image_id_1 = '#'+id_1;
+				console.log('matches : ', id_0, id_1, match_cls_array);
+			    if (match_cls_array[0] == match_cls_array[1]) {					
+					count +=1;
+					matched_array.push(id_0);
+					matched_array.push(id_1);
+					console.log('count', count);
+					comm = 'comm'+count.toString();
+					image_0 = 'static\\images\\' +comm+'.PNG';
+				}
+				else {
+					image_0 = 'static\\images\\blank.PNG';
+					document.getElementById("not").style.visibility = "visible";
+					console.log('not matched')
+			 	}
+			  var delayInMilliseconds = 1000; //5 second
+		      setTimeout(function() {
+				document.getElementById(id_0).src=image_0;
+				document.getElementById(id_1).src=image_0;
+				console.log('delay - 1000');
+			  }, delayInMilliseconds);
+			  document.getElementById("not").style.visibility = "hidden";
+			  match_cls_array =[];
+			  match_id_array=[]; 
+			}	
+	 } // clicked before ?
+	 if (count == 18 ) {
+		document.getElementById("win").style.visibility = "visible";
+	 }
+
+
+   }  // game
+});
+
+
+
+
+  var start = d3.select("#start");
+
+  start.on("click", function() {
+
+  // Prevent the page from refreshing
+    d3.event.preventDefault();
+    console.log('start');
+	new_array = image_array
+	shuffleArray(new_array);
+	console.log('new array', new_array)
+	displayTiles(new_array);
+	document.getElementById("win").style.visibility = "hidden";
+	game_start = true;
+	count = 0;
+	match_cls_array =[];
+    match_id_array=[]; 
+	matched_array=[];
+
+
+
+  })      
+    
+
+
+</script>      
+
+
+  </body>
+  </html>
